@@ -8,48 +8,49 @@ output:
     df_print: paged
 ---
 ```{r}
-load("rcourse_lesson1_environment.RData")
+load("analise-exploratoria-de-dados.RData")
 ```
 
 # Data
 
-Here is a look at our two data frames. First is the one we read in, the second is our subset of just the bilinguals' data.
+Aqui está uma olhada em nossos dois data frames. O primeiro apresenta o registro de um experimento onde foi observado o peso de 50 pintinhos, nos 21 primeiros dias de vida, submetidos a 4 dietas diferentes. 
+O segundo, é um subconjunto onde é apresentado o peso dos pintinhos ao final dos 21 dias. Apenas 45 dos 50 pintinhos foram acompanhados até 21º dia.
 
 ```{r}
 head(data)
-head(data_bl)
+head(time_21)
 ```
 
 # Figures
 
-Here's a figure of the bilinguals compared to the monolinguals.
+Essa figura apresenta os registros do peso dos pintinhos de acordo com a dieta.
 
 ```{r, fig.align='center'}
 data.plot
 ```
 
-Here's a figure of the bilinguals separted by L2 proficiency.
+Aqui é apresentado a distribuição do peso dos pintinhos ao final dos 21 dias, de acordo com a dieta.
 
 ```{r, fig.align='center'}
-data_bl.plot
+time_21.plot
 ```
 
 # Descriptive Statistics
 
-When looking at the summary statistics by group, bilinguals have much more variance than monolinguals.
+Quando resumo da evolução do peso agrupando de acordo com os dias de vida, observamos como a variância aumenta com os dias. Podemos ver, com isso, a grande influência das dietas sobre o peso dos pintinhos.
 
 ```{r}
-data_sum
+weight_by_time
+
 ```
 
-However, when summarising within type of bilingual (level of L2 proficiency) we see where the variance comes from.
+Quando olhamos o resumo do peso final dos pintinhos pelas 4 dietas, fica mais claro a diferença entre os resultados médios de cada dieta. Entretanto, ainda podemos ver um grande variabilidade nos resultados das dietas.
+A que se mostra mais consistente é a dieta "4", apresentando um desvio médio de 43.3 gramas.
 
 ```{r}
-data_bl_sum
+weight_21days_by_diet
 ```
-
-To show how all three groups compare we can make a final figure with the bilinguals separated out by L2 profiency and still include the monolinguals.
-
+Por fim, para evidenciar a diferença entre o comportamento das dietas ao longo dos 21 dias, foi desenhado o gráfico abaixo de acordo com as médias para cada dia e dieta.
 ```{r, fig.align='center'}
-data_blwml.plot
+weight_time_diet.plot
 ```
