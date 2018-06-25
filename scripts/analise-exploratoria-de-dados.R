@@ -105,7 +105,7 @@ dev.off()
 weight_time_diet.plot = ggplot(weight_by_time_and_diet, aes(x=Time, y=weight_mean)) +
   geom_smooth(method = loess, aes(color=Diet), se=FALSE) +
   geom_point(aes(color=Diet))+
-  labs(title="Evolução do peso dos pintinhos de acordo com a dieta", x="Dias de vida", y="Peso (g)") +
+  labs(title="Desempenho das dietas", x="Dias de vida", y="Peso (g)") +
   theme_classic() +
   theme(text=element_text(size=18), title=element_text(size=18))
 
