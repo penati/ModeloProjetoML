@@ -44,7 +44,7 @@ parameters.fit_1 # minsplit = 20, minbucket = 7, cp=0.01,
 fancyRpartPlot(fit_1)
 
 ## check with test set
-prediction_test1 <- predict(fit_1, test, type = "class")
+prediction_1 <- predict(fit_1, test, type = "class")
 prop.table(table(prediction_1,test$low))
 
 
