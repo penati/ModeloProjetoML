@@ -1,0 +1,55 @@
+---
+title: 'Lesson 1 - Análise exploratória de dados'
+author: "Filipe Penati"
+output:
+  html_document:
+    df_print: paged
+---
+# Carregando os dados
+````{r}
+load("lesson1_analise-exploratoria-de-dados.RData")
+````
+
+# Data
+
+Aqui está uma olhada em nossos dois data frames. O primeiro apresenta o registro de um experimento onde foi observado o peso de 50 pintinhos, nos 21 primeiros dias de vida, submetidos a 4 dietas diferentes. 
+O segundo, é um subconjunto onde é apresentado o peso dos pintinhos ao final dos 21 dias. Apenas 45 dos 50 pintinhos foram acompanhados até 21º dia.
+
+````{r}
+head(data)
+head(time_21)
+````
+
+# Figures
+
+Essa figura apresenta os registros do peso dos pintinhos de acordo com a dieta.
+
+````{r, fig.align='center'}
+data.plot
+```
+
+Aqui é apresentado a distribuição do peso dos pintinhos ao final dos 21 dias, de acordo com a dieta.
+
+````{r, fig.align='center'}
+time_21.plot
+````
+
+# Descriptive Statistics
+
+Quando resumo da evolução do peso agrupando de acordo com os dias de vida, observamos como a variância aumenta com os dias. Podemos ver, com isso, a grande influência das dietas sobre o peso dos pintinhos.
+
+````{r}
+print.data.frame(weight_by_time)
+
+````
+
+Quando olhamos o resumo do peso final dos pintinhos pelas 4 dietas, fica mais claro a diferença entre os resultados médios de cada dieta. Entretanto, ainda podemos ver um grande variabilidade nos resultados das dietas.
+A que se mostra mais consistente é a dieta "4", apresentando um desvio médio de 43.3 gramas.
+
+```{r}
+print.data.frame(weight_21days_by_diet)
+```
+Por fim, para evidenciar a diferença entre o comportamento das dietas ao longo dos 21 dias, foi desenhado o gráfico abaixo de acordo com as médias para cada dia e dieta.
+```{r, fig.align='center'}
+weight_time_diet.plot
+```
