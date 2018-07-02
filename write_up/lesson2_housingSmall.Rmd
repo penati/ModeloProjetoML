@@ -1,0 +1,50 @@
+---
+title: "Lesson 2 - Problema de Regressão Linear"
+author: "Filipe Penati"
+output: html_document
+---
+# Carregando os dados
+```{r}
+library(knitr)
+load("lesson2_housingSmall.RData")
+```
+
+#Vizualizando os dados
+Os dados apresentam informações sobre a área contruída, quantidade de quartos, vagas de garagem e o respectivo preço de 14 imóveis.
+````{r}
+head(hr)
+````
+````{r}
+str(hr)
+````
+````{r}
+summary(hr)
+````
+````{r, echo=FALSE}
+g
+````
+
+## Modelos de Previssão
+A fim de obter um modelo para a previsão de preço dos apartamentos, foram analizados 3 modelos de regressão baseando-se nos atributos dos apartamentos (área, quartos e garagem).
+
+#### Regressão Linear
+lm_linear <- lm(data=hr, preco~area+garagem+quartos)
+
+#### Regressão Quadrática
+lm_quadra <- lm(data=hr, preco~poly(area+garagem+quartos,2,raw=TRUE))
+
+#### Regressão Polinomial
+lm_poli <- lm(data=hr, preco~poly(area+garagem+quartos,17,raw=TRUE))
+
+## Vizualizando resultados
+No gráfico abaixo, é possível vizualizar a distribuição dos erros residuais de cada modelo, bem como o erro médio quadrático, representado pelo triângulo.
+Com isso vemos que o modelo que mais de aproxima dos dados disponíveis é a Regessão polinomial.
+````{r}
+residuais.plot
+````
+
+Entretando, verificando o erro padrão residual e o R-quadrado ajustado de cada modelo, é possível ver que o modelo de regressão Linear possiu melhores índices (menor erro e maior R), apresentando-se como o melhor modelo a ser adotado para a previsão de preço de apartamento.
+Abaixo é possivel ver o erro padrão residual e o R-quadrado ajustado de cada modelo:
+````{r}
+kable(erros_e_r2)
+````
