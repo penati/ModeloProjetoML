@@ -1,0 +1,212 @@
+---
+title: "Lesson 3 - Problema sob incerteza"
+author: "Filipe Penati"
+output: html_document
+---
+# Carregando os dados
+```{r}
+library(knitr)
+load("lesson3_BlueSky.RData")
+```
+
+# Visualizando os dados
+Os dados apresentam a demanda diária por Tarifa Cheia de 12 meses da BlueSky Airlines.
+````{r}
+head(dados)
+````
+````{r}
+str(dados)
+````
+````{r}
+summary(dados)
+````
+````{r, echo=FALSE}
+first.plot
+````
+
+# Modelos de Previssão
+O objetivo é encontrar um modelo que a apoie a gerência na definição dos limites de reservas de bilhetes antecipados para a semana de 19 de março de 2007 até de 25 de março de 2007.
+Para isso, são analisandos alguns modelos de previsão buscando aquele que apresente o menor erro.
+
+## Modelo 1 - Distribuição Normal
+Nesse modelo, não se leva em consideração o dia da semana e considera-se que a demanda por passagens segue uma distribuição normal com a média igual a média do último ano.
+O nível de proteção é defindo a partir dos valor da tarifa cheia, 174 e da tarifa antecipada com desconto, 114.
+Esse modelo apresenta o seguinte erro padrão:
+```{r}
+rmse_1
+```
+
+Sua representação gráfica pode ser vista a seguir:
+```{r}
+prot_level_1.plot
+```
+
+## Modelo 2 - Distribuição Empírico
+Nesse modelo, não se leva em consideração o dia da semana e considera-se que a demanda por passagens segue uma distribuição empírica com a média igual a mediana da demanda do último ano.
+O nível de proteção é defindo a partir dos valor da tarifa cheia, 174 e da tarifa antecipada com desconto, 114.
+Esse modelo apresenta o seguinte erro padrão:
+```{r}
+rmse_2
+```
+
+Sua representação gráfica pode ser vista a seguir:
+```{r}
+prot_level_2.plot
+```
+
+## Modelo 3 - Distribuição Normal por dia da semana
+Esse modelo considera-se que a demanda por passagens segue uma distribuição normal de acordo com o dia da semana.Para isso, é necessário acrescentar nos dados o dia da semana de acordo com a data.
+```{r}
+dados$day <- weekdays(dados$date)
+```
+
+O nível de proteção é defindo a partir dos valor da tarifa cheia, 174 e da tarifa antecipada com desconto, 114.
+Esse modelo apresenta o seguinte erro padrão:
+```{r}
+rmse_3
+```
+
+Sua representação gráfica pode ser vista a seguir:
+```{r}
+prot_level_3.plot
+```
+
+
+## Modelo 4 - Distribuição Empírica por dia da semana
+Esse modelo considera-se que a demanda por passagens segue uma distribuição empírica como o Modelo 2, porém considerando o dia da semana. 
+O nível de proteção é defindo a partir dos valor da tarifa cheia, 174 e da tarifa antecipada com desconto, 114.
+Esse modelo apresenta o seguinte erro padrão:
+```{r}
+rmse_4
+```
+Sua representação gráfica pode ser vista a seguir:
+```{r}
+prot_level_4.plot
+```
+
+
+## Modelo 5 - Regressão Linear
+Esse modelo se baseia nos dados do ano anterior para gerar uma regressão linear.
+
+#### 5.1 demand ~ day
+Inicialmente, se considerar apenas o dia da semana como termo da regressão. Para isso, é necessário transformar os dias da semana em fatores.
+```{r}
+dados$day <- factor(dados$day)
+```
+Esse modelo apresenta o seguinte erro padrão:
+```{r}
+rmse_5.1
+```
+
+#### 5.2 demand ~ month
+Considerando agora apenas o mês. Para isso, primerio é necessário acrescentar essa informação no dataframe e depois transformar os meses em fatores.
+```{r}
+dados$month <- months(dados$date)
+dados$month <- factor(dados$month)
+```
+Esse modelo apresenta o seguinte erro padrão:
+```{r}
+rmse_5.2
+```
+
+#### 5.3 demand ~ day + month
+Agora se considera tanto o dia da semana quanto o mês como termos para estimar a demanda.
+Esse modelo apresenta o seguinte erro padrão:
+```{r}
+rmse_5.3
+```
+
+#### 5.4 demand ~ day + month + day:month
+Por fim, além do dia da semana e do mês, se considera também o cruzamento entre esses dois fatores como termos para estimar a demanda.
+Esse modelo apresenta o seguinte erro padrão:
+```{r}
+rmse_5.4
+```
+
+A tabela abaixo mostra um resumo dos erros dos modelos construidos até o momento.
+Com isso podemos ver que o menos é erro é obtido a partir do modelo "5.3"
+```{r}
+kable(erros, align = "l")
+```
+
+
+### Visualizando a previsão do modelo
+A previsão obtida a partir desse modelo é possível ser visualizada no gráfico a seguir.
+```{r}
+prot_level_5.plot
+```
+
+
+## Melhorando o modelo
+No gráfico é possível observar alguns dados dos quais a previsão do modelo ficou muito distante ainda. Possívelmente são feriados ou alguma data festiva, o que faz com o que a damanda fuja do padrão.
+Buscando indentificar esses pontos, observemos os gráficos de erros.
+```{r}
+layout(matrix(c(1,2,3,4),2,2)) # optional 4 graphs/page 
+plot(dados.fit.3)
+```
+
+É possível notar três observações principais que apresentam grande erro: 263, 272 e 300.
+Buscando essas datas nos dados, se vê que duas delas são próximas de grandes feriados do EUA.
+```{r}
+#dados$date[263] #2006-11-22 Thanksgiving Day
+#dados$date[272] #2006-12-01
+#dados$date[300] #2006-12-29 Newyear
+```
+
+### Modificando o dataframe
+Para buscar acrescentar esses fatores do modelo, é possível criar uma nova coluna no dataframe e inserir um fator para diferenciar essas datas.
+```{r}
+#dados <- dados %>%
+#  mutate (dados, holydays=0)
+#dados[263, "holydays"] <- "1"
+#dados[272, "holydays"] <- "-1" #eh um dia que apresenta queda e não aumento, como em feriado
+#dados[300, "holydays"] <- "1"
+#dados$holydays <- factor(dados$holydays)
+```
+
+## Modelo 6 - demand ~ day + month + holydays
+Acresentando o fator "feriado" ao modelo 5.3 obtemos o seguinte erro:
+```{r}
+rmse_6
+```
+Analisando novamente os gráficos de erros para o novo modelo é possível observar que ainda existem algumas observações que destoam das demais.
+```{r}
+layout(matrix(c(1,2,3,4),2,2)) # optional 4 graphs/page 
+plot(dados.fit.6)
+```
+
+
+Acrescenta-se o fator de feriado também a essas datas para se obter um modelo mais refinado.
+```{r}
+#dados[42, "holydays"] <- "1"
+#dados[302, "holydays"] <- "1"
+#dados[306, "holydays"] <- "1"
+```
+
+## Modelo 7 - demand ~ day + month + holydays
+A partir dessas modificações, se constroi um novo modelo, obtendo um erro um pouco que os anteriores:
+```{r}
+kable(erros, align = "l")
+```
+
+
+Analisando os gráficos de erros desse modelo, se observa que embora os erros de algumas observações ainda destoem, eles já estão bem mais próximos das demais. Dessa forma, se assume esse como o modelo final.
+```{r}
+layout(matrix(c(1,2,3,4),2,2)) # optional 4 graphs/page 
+plot(dados.fit.7)
+```
+
+A seguir é possível visualizar a previsão feita a partir do Modelo 7.
+```{r}
+prot_level_7.plot
+```
+
+## Defininco níveis de proteção e limites de reservas
+Com o modelo definido, é possível estimar os níveis de proteção e limites de reservas para a semana objetivo.
+É possível níveis ver esses níveis no gráfico e na tabela detalhada na sequencia.
+```{r}
+prot_lv_e_limits.plot
+```
+```{r}
+kable(prot_lv_e_limits.df, align = "c")
+```
