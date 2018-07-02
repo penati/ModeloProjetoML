@@ -3,7 +3,7 @@ title: "Lesson 4 - Problema de árvore de decisão"
 author: "Filipe Penati"
 output: html_document
 ---
-# Carregando os dados
+## Carregando os dados
 ```{r}
 library(knitr)
 library(rpart)
@@ -11,8 +11,8 @@ load("lesson4_birthwt.RData")
 ```
 O objetivo é prever se um bebê nascerá com baixo peso (menos que 2,5Kg). 
 Os dados trazem informações sobre a mãe, o peso de bebês o nascer e o marcador "low", quando o peso é menor que 2,5Kg.
-# Visualizando os dados
-Os dados apresentam a demanda diária por Tarifa Cheia de 12 meses da BlueSky Airlines.
+
+## Visualizando os dados
 ````{r}
 head(bw)
 ````
@@ -26,7 +26,7 @@ summary(bw)
 hist(bw$bwt)
 ````
 
-# Dividindo os dados em Treinamento e Teste
+## Dividindo os dados em Treinamento e Teste
 A fim de testar o precisão do modelo a ser construido, será utilizado dois grupo aleatórios do dados. O primeiro, com 70% das observações, será utilizado para o "treinamento" do modelo e o segundo, com 30% das observações, para testar sua precisão.
 
 ```{r}
@@ -36,7 +36,7 @@ train <- bw[train.index,]
 test  <- bw[-train.index,]
 ```
 
-# Construindo a árvore de decisão
+## Construindo a árvore de decisão
 ```{r}
 fit_1 <- rpart(low ~ age + lwt + race + smoke + ptl + ht + ui + ftv,
              data=train,
@@ -44,7 +44,7 @@ fit_1 <- rpart(low ~ age + lwt + race + smoke + ptl + ht + ui + ftv,
 ```
 ![](images/lesson4_fit1.png)
 
-# Checando a precisão do modelo
+## Checando a precisão do modelo
 ```{r}
 prediction_1 <- predict(fit_1, test, type = "class")
 table1 <- prop.table(table(prediction_1,test$low))
@@ -55,7 +55,7 @@ accuracy1 <- table1[1,1]+table1[2,2]
 accuracy1
 ```
 
-# Identificando os parâmetros do modelo para melhorá-lo
+## Identificando os parâmetros do modelo para melhorá-lo
 ```{r}
 parameters.fit_1 <- list(minsplit=fit_1$control$minsplit, 
                          minbucket=fit_1$control$minbucket, 
@@ -64,7 +64,7 @@ parameters.fit_1 <- list(minsplit=fit_1$control$minsplit,
 parameters.fit_1
 ```
 
-# Testando uma árvore maior
+## Testando uma árvore maior
 ```{r}
 fit_2 <- rpart(low ~ age + lwt + race + smoke + ptl + ht + ui + ftv,
              data=train, method="class",
@@ -74,7 +74,7 @@ fit_2 <- rpart(low ~ age + lwt + race + smoke + ptl + ht + ui + ftv,
 ```
 ![](images/lesson4_fit2.png)
 
-# Checando a precisão do modelo
+## Checando a precisão do modelo
 ```{r}
 prediction_2 <- predict(fit_2, test, type = "class")
 table2 <- prop.table(table(prediction_2,test$low))
@@ -85,7 +85,7 @@ accuracy2 <- table2[1,1]+table2[2,2]
 accuracy2
 ```
 
-# Testando com uma grande árvore
+## Testando com uma grande árvore
 ```{r}
 fit_5 <- rpart(low ~ age + lwt + race + smoke + ptl + ht + ui + ftv,
                data=train, method="class",
@@ -95,7 +95,7 @@ fit_5 <- rpart(low ~ age + lwt + race + smoke + ptl + ht + ui + ftv,
 ```
 ![](images/lesson4_fit5.png)
 
-# Checando a precisão do modelo
+## Checando a precisão do modelo
 ```{r}
 prediction_5 <- predict(fit_5, test, type = "class")
 table5 <- prop.table(table(prediction_5,test$low))
