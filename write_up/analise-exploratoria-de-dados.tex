@@ -120,13 +120,14 @@
     \author{Filipe Penati}
     \preauthor{\centering\large\emph}
   \postauthor{\par}
-      \predate{\centering\large\emph}
-  \postdate{\par}
-    \date{24 de Junho, 2018}
-
+    \date{}
+    \predate{}\postdate{}
+  
 
 \begin{document}
 \maketitle
+
+\section{Carregando os dados}\label{carregando-os-dados}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -207,26 +208,24 @@ isso, a grande influência das dietas sobre o peso dos pintinhos.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{weight_by_time}
+\KeywordTok{print.data.frame}\NormalTok{(weight_by_time)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-## # A tibble: 12 x 5
-##     Time weight_mean weight_sd weight_min weight_max
-##    <dbl>       <dbl>     <dbl>      <dbl>      <dbl>
-##  1     0        41.1      1.13         39         43
-##  2     2        49.2      3.69         35         55
-##  3     4        60.0      4.50         48         69
-##  4     6        74.3      9.01         51         96
-##  5     8        91.2     16.2          57        131
-##  6    10       108.      24.0          51        163
-##  7    12       129.      34.1          54        217
-##  8    14       144.      38.3          68        240
-##  9    16       168.      46.9          71        287
-## 10    18       190.      57.4          72        332
-## 11    20       210.      66.5          76        361
-## 12    21       219.      71.5          74        373
+##    Time weight_mean weight_sd weight_min weight_max
+## 1     0    41.06000  1.132272         39         43
+## 2     2    49.22000  3.688316         35         55
+## 3     4    59.95918  4.495179         48         69
+## 4     6    74.30612  9.012038         51         96
+## 5     8    91.24490 16.239780         57        131
+## 6    10   107.83673 23.987277         51        163
+## 7    12   129.24490 34.119600         54        217
+## 8    14   143.81250 38.300412         68        240
+## 9    16   168.08511 46.904079         71        287
+## 10   18   190.19149 57.394757         72        332
+## 11   20   209.71739 66.511708         76        361
+## 12   21   218.68889 71.510273         74        373
 \end{verbatim}
 
 Quando olhamos o resumo do peso final dos pintinhos pelas 4 dietas, fica
@@ -237,18 +236,16 @@ um desvio médio de 43.3 gramas.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{weight_21days_by_diet}
+\KeywordTok{print.data.frame}\NormalTok{(weight_21days_by_diet)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-## # A tibble: 4 x 5
-##   Diet  weight_mean weight_sd weight_min weight_max
-##   <fct>       <dbl>     <dbl>      <dbl>      <dbl>
-## 1 1            178.      58.7         96        305
-## 2 2            215.      78.1         74        331
-## 3 3            270.      71.6        147        373
-## 4 4            239.      43.3        196        322
+##   Diet weight_mean weight_sd weight_min weight_max
+## 1    1    177.7500  58.70207         96        305
+## 2    2    214.7000  78.13813         74        331
+## 3    3    270.3000  71.62254        147        373
+## 4    4    238.5556  43.34775        196        322
 \end{verbatim}
 
 Por fim, para evidenciar a diferença entre o comportamento das dietas ao
