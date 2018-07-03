@@ -1,0 +1,88 @@
+---
+title: "Lesson 6 - Problema de Regressão utilizando KNN"
+author: "Filipe Penati"
+output: html_document
+---
+
+## Carregando os dados
+```{r}
+library(knitr)
+library(caret)
+load("lesson6_wine-classes.RData")
+```
+O objetivo de exercício é construir um modelo para reconhecer a origem do vinho a partir das suas características, usando KNN
+Os dados apresentas 13 atributos com valores contínuos e mais um atributo (V1) com rótulos de classe de origem dos vinhos.
+
+## Visualizando os dados
+````{r}
+head(wine_df)
+````
+````{r}
+str(wine_df)
+````
+````{r}
+summary(wine_df)
+````
+
+## Dividindo os dados em Treinamento e Teste
+Usando a função createDataPartition() do pacote caret
+
+```{r}
+set.seed(300)
+indiceTrain <- createDataPartition(y = wine_df$classe,p = 0.75,list = FALSE)
+training <- wine_df[indiceTrain,]
+testing <- wine_df[-indiceTrain,]
+```
+
+## Checando a distribuição dos dados de treinamento e teste
+A função createDataPartition() procura sempre manter a distribuição da amostra
+```{r}
+wine_df$grupo = "Treinamento"
+wine_df$grupo[-indiceTrain]="Teste"  
+
+m <- ggplot(data = wine_df, aes(x=classe, fill=grupo)) 
+m + geom_density(alpha=0.4)
+```
+
+## Preprocessamento dos dados
+kNN é sensivel a distribuição dos dados por variável.
+
+Será necessário normallizá-los. O pacote caret permite incluir o preprocessamento. No caso, será usado center e scale
+```{r}
+trainX <- training[,names(training) != "classe"]
+preProcValues <- preProcess(x = trainX,method = c("center", "scale"))
+preProcValues
+```
+
+## Treinamento
+```{r}
+set.seed(400)
+ctrl <- trainControl(method = "repeatedcv",repeats = 3) 
+
+knnFit <- train(classe ~ V2 + V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10 + V11 + V12 + V13 + V14,
+                data = training, method = "knn", 
+                trControl = ctrl, 
+                preProcess = c("center","scale"), 
+                tuneLength = 20)
+```
+
+## Output de kNN fit
+```{r}
+knnFit
+```
+
+## Plotando knnFit
+```{r}
+plot(knnFit)
+```
+
+## Checando a precisão do modelo
+```{r}
+prediction <- predict(knnFit, wine_df)
+prob.predict <- prop.table(table(prediction,wine_df$classe))
+prob.predict
+```
+```{r}
+accuracy <- sum(prob.predict[1,1],prob.predict[2,2],prob.predict[3,3])
+accuracy
+```
