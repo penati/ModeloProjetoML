@@ -1,0 +1,94 @@
+---
+title: "Lesson 5 - Problema de Regressão Logística"
+author: "Filipe Penati"
+output: html_document
+---
+
+## Carregando os dados
+```{r}
+library(knitr)
+library(rpart)
+load("lesson5_birthwt_logisticregression.RData")
+```
+O objetivo é prever se um bebê nascerá com baixo peso (menos que 2,5Kg) utilizando regressão logística. 
+Os dados trazem informações sobre a mãe, o peso de bebês o nascer e o marcador "low", quando o peso é menor que 2,5Kg.
+
+## Visualizando os dados
+````{r}
+head(bw)
+````
+````{r}
+str(bw)
+````
+````{r}
+summary(bw)
+````
+````{r, echo=FALSE}
+hist(bw$bwt)
+````
+
+## Dividindo os dados em Treinamento e Teste
+A fim de testar o precisão do modelo a ser construido, será utilizado dois grupo aleatórios do dados. O primeiro, com 70% das observações, será utilizado para o "treinamento" do modelo e o segundo, com 30% das observações, para testar sua precisão.
+
+```{r}
+set.seed(123)
+train.index <- sample((nrow(bw)),0.7*nrow(bw))
+train <- bw[train.index,]
+test  <- bw[-train.index,]
+```
+
+## Construindo o modelo
+```{r}
+fit <- glm(low ~ age + lwt + race + smoke + ptl + ht + ui + ftv,
+           data = train,
+           family = binomial(link = "logit"))
+```
+
+## Anaalizando os resultados
+```{r}
+summary(fit)
+```
+
+Através do resumo, é possível ver que a quantidade de trabalho prematuros anteriores (ptl) e a presença de irritabilidade uterina (ui) são as variáveis mais significativas estatisticamente. A positividade desses coeficientes indica o aumento de chances do bebê nascer com baixo peso com a presença desses fatores.
+
+## Utilizando Analysis Of Variance (ANOVA) para analisar o modelo
+```{r}
+anova(fit, test="Chisq")
+```
+
+Novamente, é possível observar que as variáveis "ptl" e "ui" são as que mais contribuem para reduzir o desvio residual ao serem acresentadas no modelo.
+É possível ver também que a varíavel "smoke" e "ht", que indicam, respectivamente, se a mãe fumou durante  agravidez e se possui histórico de hipertensão, possuem grande relevância para a melhora do modelo.
+
+## Checando a precisão do modelo
+```{r}
+prediction_prob1 <- predict(fit,newdata=test,type='response')
+prediction1 <- ifelse(prediction_prob1 > 0.5,1,0)
+
+table1 <- prop.table(table(prediction1,test$low))
+table1
+```
+```{r}
+accuracy1 <- table1[1,1]+table1[2,2]
+accuracy1
+```
+
+## Testando um modelo menor
+Considerando apenas as variáveis mais significativas
+```{r}
+fit2 <- glm(low ~ smoke + ptl + ht + ui,
+            data=train, 
+            family=binomial(link="logit"))
+```
+
+## Checando a precisão do modelo
+```{r}
+prediction_prob2 <- predict(fit2,newdata=test,type='response')
+prediction2 <- ifelse(prediction_prob2 > 0.5,1,0)
+
+table2 <- prop.table(table(prediction2,test$low))
+table2
+```
+```{r}
+accuracy2 <- table2[1,1]+table2[2,2]
+accuracy2
+```
